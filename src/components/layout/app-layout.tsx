@@ -27,7 +27,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { UserCircle, Search, Bell, Settings as SettingsIcon, ChevronRight } from 'lucide-react'; // Added ChevronRight
+import { UserCircle, Search, Bell, Settings as SettingsIcon } from 'lucide-react';
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -62,23 +62,28 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         <header className="sticky top-0 z-10 flex items-center justify-between h-16 px-4 bg-background/80 backdrop-blur-sm border-b">
           <div className="flex items-center gap-2">
             <SidebarTrigger />
-            <div className="text-lg font-medium hidden sm:flex items-center">
-              <Link href="/dashboard" className="hover:text-primary transition-colors">SprayerDrones</Link>
+            <div className="text-sm font-medium hidden sm:flex items-center">
+              <Link
+                href="/dashboard"
+                className="text-[#22CCF2] no-underline hover:-translate-y-0.5 transition-transform duration-200"
+              >
+                SprayerDrones
+              </Link>
               {pathname !== '/dashboard' && currentPageLabel !== "Manager" && (
                 <>
-                  <ChevronRight className="h-5 w-5 text-muted-foreground mx-1" />
-                  <span className="text-foreground">{currentPageLabel}</span>
+                  <span className="mx-1 text-muted-foreground">/</span>
+                  <span className="text-muted-foreground">{currentPageLabel}</span>
                 </>
               )}
-               {pathname === '/dashboard' && (
-                 <>
-                  <ChevronRight className="h-5 w-5 text-muted-foreground mx-1" />
-                  <span className="text-foreground">Dashboard</span>
-                 </>
-               )}
-               {currentPageLabel === "Manager" && pathname !== '/dashboard' && (
-                  <ChevronRight className="h-5 w-5 text-muted-foreground mx-1" />
-               )}
+              {pathname === '/dashboard' && (
+                <>
+                  <span className="mx-1 text-muted-foreground">/</span>
+                  <span className="text-muted-foreground">Dashboard</span>
+                </>
+              )}
+              {currentPageLabel === "Manager" && pathname !== '/dashboard' && (
+                <span className="mx-1 text-muted-foreground">/</span>
+              )}
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -90,13 +95,13 @@ export default function AppLayout({ children }: { children: ReactNode }) {
               <Bell className="h-5 w-5" />
               <span className="sr-only">Notifications</span>
             </Button>
-             <Link href="/settings" passHref>
+            <Link href="/settings" passHref>
               <Button variant="ghost" size="icon" className="rounded-full" aria-label="Configurações">
                 <SettingsIcon className="h-5 w-5" />
                 <span className="sr-only">Configurações</span>
               </Button>
             </Link>
-             <DropdownMenu>
+            <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-9 w-9 rounded-full">
                   <Avatar className="h-9 w-9">

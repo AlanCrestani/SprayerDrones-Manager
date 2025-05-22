@@ -7,14 +7,12 @@ import {
   LayoutDashboard,
   Users, // Icon for Usuários
   Rocket, // Icon for Drones
-  Briefcase, // Icon for Clientes (Placeholder, consider Briefcase or UserCheck)
+  Briefcase, // Icon for Clientes
   Archive, // Icon for Produtos
   FileSpreadsheet, // Icon for Orçamentos
   ClipboardList, // Icon for Serviços
   BarChartBig, // Icon for Relatórios
-  Settings, // Icon for Configurações
-  Route,
-  Wand2,
+  Settings // Icon for Configurações
 } from 'lucide-react';
 import {
   SidebarMenu,
@@ -33,7 +31,6 @@ export const navItems = [
   { href: '/budgets', label: 'Orçamentos', icon: FileSpreadsheet },
   { href: '/services', label: 'Serviços', icon: ClipboardList },
   { href: '/reports', label: 'Relatórios', icon: BarChartBig },
-  { href: '/optimize-route', label: 'Optimize Route', icon: Route, iconSecondary: Wand2 },
   { href: '/settings', label: 'Configurações', icon: Settings },
 ];
 
@@ -51,8 +48,7 @@ export default function SidebarNav() {
               tooltip={item.label}
             >
               <item.icon className="h-5 w-5" />
-              {item.iconSecondary && <item.iconSecondary className="h-5 w-5 ml-[-0.5rem] text-primary" />}
-              <span className={cn(item.iconSecondary && "ml-1")}>{item.label}</span>
+              <span className={cn("ml-1 text-sm")}>{item.label}</span>
             </SidebarMenuButton>
           </Link>
         </SidebarMenuItem>
