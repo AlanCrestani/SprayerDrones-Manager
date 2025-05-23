@@ -43,7 +43,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     <SidebarProvider defaultOpen>
       <Sidebar variant="floating" collapsible="icon" side="left">
         <SidebarHeader className="p-4">
-          <Link href="/dashboard" className="flex items-center gap-2">
+          <Link href="/dashboard" suppressHydrationWarning className="flex items-center gap-2">
             <Logo className="w-8 h-8 text-primary" />
             <h1 className="text-xl font-semibold group-data-[collapsible=icon]:hidden">
               SprayerDrones
@@ -65,7 +65,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
             <div className="text-sm font-medium hidden sm:flex items-center">
               <Link
                 href="/dashboard"
-                className="text-[#22CCF2] no-underline hover:-translate-y-0.5 transition-transform duration-200"
+                className="text-[#1570BF] no-underline hover:-translate-y-0.5 transition-transform duration-200"
               >
                 SprayerDrones
               </Link>
