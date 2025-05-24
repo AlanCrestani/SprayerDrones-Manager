@@ -39,7 +39,12 @@ export default function UsersPage() {
 
   useEffect(() => {
     const storedUsers = JSON.parse(localStorage.getItem("users") || "[]");
-    setUsers(storedUsers);
+    // Ensure each user has a unique ID if it's missing for key prop, though this should ideally come from data source
+    const usersWithIds = storedUsers.map((user: User, index: number) => ({
+      ...user,
+      id: user.id || index // Fallback to index if id is missing
+    }));
+    setUsers(usersWithIds);
   }, []);
 
   const totalPages = Math.ceil(users.length / itemsPerPage);
@@ -49,7 +54,7 @@ export default function UsersPage() {
   );
 
   return (
-    <div className="flex flex-col gap-6 flex-1 min-h-screen p-6">
+    <div className="flex flex-col gap-6"> {/* Modified className here */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Users className="h-8 w-8 text-primary" />
@@ -81,8 +86,8 @@ export default function UsersPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {paginatedUsers.map((user, index) => (
-                <TableRow key={index} className="hover:bg-muted/50">
+              {paginatedUsers.map((user) => ( // Changed index to user.id for key
+                <TableRow key={user.id} className="hover:bg-muted/50">
                   <TableCell className="font-medium truncate">{user.name}</TableCell>
                   <TableCell className="truncate">{user.email}</TableCell>
                   <TableCell className="truncate">{user.whatsapp}</TableCell>
@@ -90,7 +95,8 @@ export default function UsersPage() {
                   <TableCell className="truncate">{user.sendVia}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
-                      <Link href={`/users/edit?id=${(currentPage - 1) * itemsPerPage + index}`}>
+                      {/* Ensure user.id exists and is a number for URL param, or handle appropriately */}
+                      <Link href={`/users/edit?id=${user.id}`}>
                         <Button variant="ghost" size="icon" aria-label="Editar">
                           <Pencil className="w-4 h-4" />
                         </Button>
@@ -105,20 +111,22 @@ export default function UsersPage() {
             </TableBody>
           </Table>
 
-          <div className="w-full mt-6 flex justify-center">
-            {Array.from({ length: totalPages }, (_, index) => (
-              <button
-                key={index}
-                className={`mx-1 px-3 py-1 rounded-full border text-sm font-medium transition-colors ${currentPage === index + 1
-                  ? "bg-primary text-white"
-                  : "bg-background text-muted-foreground hover:bg-muted"
-                  }`}
-                onClick={() => setCurrentPage(index + 1)}
-              >
-                {index + 1}
-              </button>
-            ))}
-          </div>
+          {users.length > 0 && totalPages > 1 && (
+            <div className="w-full mt-6 flex justify-center">
+              {Array.from({ length: totalPages }, (_, index) => (
+                <button
+                  key={index}
+                  className={`mx-1 px-3 py-1 rounded-full border text-sm font-medium transition-colors ${currentPage === index + 1
+                    ? "bg-primary text-white"
+                    : "bg-background text-muted-foreground hover:bg-muted"
+                    }`}
+                  onClick={() => setCurrentPage(index + 1)}
+                >
+                  {index + 1}
+                </button>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
