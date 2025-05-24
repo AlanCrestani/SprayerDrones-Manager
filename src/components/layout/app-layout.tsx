@@ -1,8 +1,8 @@
 // @/components/layout/app-layout.tsx
-'use client'; // Add 'use client' for usePathname and useState/useEffect
+'use client';
 
 import type { ReactNode } from 'react';
-import { usePathname } from 'next/navigation'; // For dynamic breadcrumbs
+import { usePathname } from 'next/navigation';
 import {
   SidebarProvider,
   Sidebar,
@@ -13,7 +13,7 @@ import {
   SidebarInset,
   SidebarRail,
 } from '@/components/ui/sidebar';
-import SidebarNav, { navItems } from './sidebar-nav'; // Import navItems
+import SidebarNav, { navItems } from './sidebar-nav';
 import { Logo } from '@/components/icons/logo';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -34,7 +34,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
 
   const getCurrentPageLabel = () => {
     const currentNavItem = navItems.find(item => item.href === pathname || (item.href !== '/dashboard' && pathname.startsWith(item.href)));
-    return currentNavItem ? currentNavItem.label : "Manager"; // Default if no match
+    return currentNavItem ? currentNavItem.label : "Manager";
   };
 
   const currentPageLabel = getCurrentPageLabel();
@@ -53,12 +53,10 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         <SidebarContent>
           <SidebarNav />
         </SidebarContent>
-        <SidebarFooter className="p-4 mt-auto">
-          {/* User name could go here if not in header, or other footer content */}
-        </SidebarFooter>
+        <SidebarFooter className="p-4 mt-auto"></SidebarFooter>
       </Sidebar>
       <SidebarRail />
-      <SidebarInset>
+      <SidebarInset className="flex flex-col min-h-screen">
         <header className="sticky top-0 z-10 flex items-center justify-between h-16 px-4 bg-background/80 backdrop-blur-sm border-b">
           <div className="flex items-center gap-2">
             <SidebarTrigger />
