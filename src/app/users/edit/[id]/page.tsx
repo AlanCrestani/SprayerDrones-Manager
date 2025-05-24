@@ -1,15 +1,16 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Send, XCircle } from "lucide-react";
+import { Send, XCircle, Users as UsersIcon } from "lucide-react";
 
 interface User {
-    id: number;
+    id: string; 
     name: string;
     email: string;
     whatsapp: string;
@@ -17,110 +18,148 @@ interface User {
     sendVia: string;
 }
 
-export default function EditUserPage() {
-    const searchParams = useSearchParams();
+export default function EditUserPage({ params }: { params: { id: string } }) {
     const router = useRouter();
-    const idParam = searchParams.get("id");
+    const userId = params.id;
 
-    // Redireciona para /users se o parâmetro id estiver ausente ou inválido
-    useEffect(() => {
-        if (!idParam || isNaN(Number(idParam))) {
-            router.push("/users");
-        }
-    }, [idParam, router]);
-
-    const id = idParam ? parseInt(idParam, 10) : null;
     const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [notFound, setNotFound] = useState(false);
 
     useEffect(() => {
-        if (id === null) return;
-        // Simulação de busca de usuário. Em um app real, isso viria de uma API ou store.
-        const storedUsers: User[] = JSON.parse(localStorage.getItem("users") || "[]");
-        const foundUser = storedUsers.find((user) => user.id === id);
-        if (foundUser) {
-            setUser(foundUser);
-        } else {
-            // Se o usuário não for encontrado, redireciona para a lista
+        if (!userId) {
             router.push("/users");
+            return;
         }
-    }, [id, router]);
+
+        const storedUsersString = localStorage.getItem("users");
+        if (storedUsersString) {
+            try {
+                const storedUsers: User[] = JSON.parse(storedUsersString);
+                const foundUser = storedUsers.find(u => u.id === userId);
+                if (foundUser) {
+                    setUser(foundUser);
+                } else {
+                    setNotFound(true);
+                }
+            } catch (error) {
+                console.error("Failed to parse users from localStorage", error);
+                setNotFound(true); // Consider it not found if parsing fails
+            }
+        } else {
+            setNotFound(true); 
+        }
+        setLoading(false);
+    }, [userId, router]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { id, value } = e.target;
-        setUser((prev) => (prev ? { ...prev, [id]: value } : prev));
+        const { name, value } = e.target;
+        setUser(prev => (prev ? { ...prev, [name]: value } : prev));
     };
 
     const handleSubmit = () => {
-        if (!user || id === null) return;
-        const users: User[] = JSON.parse(localStorage.getItem("users") || "[]");
-        const updatedUsers = users.map((u) => (u.id === id ? user : u));
+        if (!user || !user.id) return;
+        
+        const storedUsersString = localStorage.getItem("users");
+        let storedUsers: User[] = [];
+        if (storedUsersString) {
+            try {
+                storedUsers = JSON.parse(storedUsersString);
+            } catch (error) {
+                console.error("Failed to parse users from localStorage before saving", error);
+                // Handle error, maybe show a toast
+                return;
+            }
+        }
+        
+        const updatedUsers = storedUsers.map(u => (u.id === user.id) ? user : u);
         localStorage.setItem("users", JSON.stringify(updatedUsers));
         router.push("/users");
     };
 
-    if (!user && id !== null) { // Adicionado id !== null para evitar flash de "Usuário não encontrado" durante o carregamento inicial
+    if (loading) {
         return (
-            <div className="p-6 text-muted-foreground flex flex-col items-center justify-center h-full">
-                <p>Carregando usuário...</p> 
-                {/* Ou um componente de Spinner/Skeleton */}
+            <div className="p-6 flex flex-col items-center justify-center h-full">
+                <p className="text-muted-foreground">Carregando usuário...</p>
             </div>
         );
+    }
+
+    if (notFound) {
+        return (
+            <div className="p-6 flex flex-col items-center justify-center h-full">
+                <Card className="w-full max-w-md shadow-lg">
+                    <CardHeader>
+                        <CardTitle className="text-2xl text-center">Usuário Não Encontrado</CardTitle>
+                    </CardHeader>
+                    <CardContent className="text-center">
+                        <p className="text-muted-foreground mb-4">
+                            O usuário que você está tentando editar não foi encontrado.
+                        </p>
+                        <Button onClick={() => router.push('/users')}>
+                            Voltar para Lista de Usuários
+                        </Button>
+                    </CardContent>
+                </Card>
+            </div>
+        );
+    }
+
+    if (!user) { 
+        return <div className="p-6 text-muted-foreground">Usuário não disponível. Tente novamente.</div>;
     }
     
-    if (!user && id === null) { // Se id for null (após redirecionamento inicial)
-         return (
-            <div className="p-6 text-muted-foreground flex flex-col items-center justify-center h-full">
-                <p>Redirecionando para a lista de usuários...</p>
-            </div>
-        );
-    }
-
-
     return (
-        <div className="p-6 max-w-3xl mx-auto">
+        <div className="flex flex-col gap-6">
+            <div className="flex items-center gap-2">
+                <UsersIcon className="h-8 w-8 text-primary" />
+                <h1 className="text-3xl font-bold tracking-tight">Editar Usuário</h1>
+            </div>
             <Card className="shadow-lg">
                 <CardHeader>
-                    <CardTitle className="text-2xl">Editar Usuário</CardTitle>
+                    <CardTitle>Formulário de Edição</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <form className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="col-span-2">
-                            <Label htmlFor="name">Nome completo</Label>
-                            <Input id="name" value={user!.name} onChange={handleChange} />
+                            <Label htmlFor="name-edit">Nome completo</Label>
+                            <Input id="name-edit" name="name" value={user.name} onChange={handleChange} placeholder="Ex: Maria Oliveira"/>
                         </div>
 
                         <div>
-                            <Label htmlFor="email">E-mail</Label>
-                            <Input id="email" type="email" value={user!.email} onChange={handleChange} />
+                            <Label htmlFor="email-edit">E-mail</Label>
+                            <Input id="email-edit" name="email" type="email" value={user.email} onChange={handleChange} placeholder="maria@email.com"/>
                         </div>
 
                         <div>
-                            <Label htmlFor="whatsapp">WhatsApp</Label>
-                            <Input id="whatsapp" type="tel" value={user!.whatsapp} onChange={handleChange} />
+                            <Label htmlFor="whatsapp-edit">WhatsApp</Label>
+                            <Input id="whatsapp-edit" name="whatsapp" type="tel" value={user.whatsapp} onChange={handleChange} placeholder="(62) 99877-6655"/>
                         </div>
 
                         <div>
-                            <Label htmlFor="profile">Perfil</Label>
+                            <Label htmlFor="profile-edit">Perfil</Label>
                             <select 
-                                id="profile" 
-                                value={user!.profile} 
+                                id="profile-edit" 
+                                name="profile"
+                                value={user.profile} 
                                 onChange={handleChange} 
-                                className="w-full border border-input bg-background rounded-md px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                             >
                                 <option value="">Selecione</option>
-                                <option value="admin">Administrativo</option>
-                                <option value="financeiro">Financeiro</option>
-                                <option value="operacional">Operacional</option>
+                                <option value="Admin">Administrativo</option>
+                                <option value="Financeiro">Financeiro</option>
+                                <option value="Operacional">Operacional</option>
                             </select>
                         </div>
 
                         <div>
-                            <Label htmlFor="sendVia">Enviar convite por</Label>
+                            <Label htmlFor="sendVia-edit">Enviar convite por</Label>
                             <select 
-                                id="sendVia" 
-                                value={user!.sendVia} 
+                                id="sendVia-edit" 
+                                name="sendVia"
+                                value={user.sendVia} 
                                 onChange={handleChange} 
-                                className="w-full border border-input bg-background rounded-md px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                             >
                                 <option value="email">E-mail</option>
                                 <option value="whatsapp">WhatsApp</option>
