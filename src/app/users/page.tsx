@@ -49,10 +49,10 @@ export default function UsersPage() {
         storedUsers = []; // Default to empty array on error
       }
     }
-    
+
     const usersWithIds = storedUsers.map((user: User, index: number) => ({
       ...user,
-      id: user.id || index.toString() 
+      id: user.id || index.toString()
     }));
     setUsers(usersWithIds);
   }, []);
@@ -100,14 +100,14 @@ export default function UsersPage() {
         </CardHeader>
         <CardContent>
           {users.length === 0 ? (
-             <div className="text-center py-10">
-                <p className="text-muted-foreground text-lg">Nenhum usuário cadastrado ainda.</p>
-                <Link href="/users/new" className="mt-4 inline-block">
-                    <Button>
-                        <PlusCircle className="mr-2 h-5 w-5" />
-                        Cadastrar Primeiro Usuário
-                    </Button>
-                </Link>
+            <div className="text-center py-10">
+              <p className="text-muted-foreground text-lg">Nenhum usuário cadastrado ainda.</p>
+              <Link href="/users/new" className="mt-4 inline-block">
+                <Button>
+                  <PlusCircle className="mr-2 h-5 w-5" />
+                  Cadastrar Primeiro Usuário
+                </Button>
+              </Link>
             </div>
           ) : (
             <>
@@ -123,13 +123,13 @@ export default function UsersPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {paginatedUsers.map((user) => ( 
+                  {paginatedUsers.map((user) => (
                     <TableRow key={user.id} className="hover:bg-muted/50">
-                      <TableCell className="font-medium truncate" title={user.name}>{user.name}</TableCell>
+                      <TableCell className="truncate" title={user.name}>{user.name}</TableCell>
                       <TableCell className="truncate" title={user.email}>{user.email}</TableCell>
                       <TableCell className="truncate" title={user.whatsapp}>{user.whatsapp}</TableCell>
-                      <TableCell className="truncate" title={user.profile}>{user.profile}</TableCell>
-                      <TableCell className="truncate" title={user.sendVia}>{user.sendVia}</TableCell>
+                      <TableCell className="truncate capitalize" title={user.profile}>{user.profile}</TableCell>
+                      <TableCell className="truncate capitalize" title={user.sendVia}>{user.sendVia}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-1">
                           <Link href={`/users/edit/${user.id}`}>
@@ -157,7 +157,7 @@ export default function UsersPage() {
                         : "bg-background text-muted-foreground hover:bg-muted"
                         }`}
                       onClick={() => setCurrentPage(index + 1)}
-                      disabled={currentPage === index +1}
+                      disabled={currentPage === index + 1}
                     >
                       {index + 1}
                     </button>
