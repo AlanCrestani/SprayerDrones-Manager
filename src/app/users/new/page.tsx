@@ -84,6 +84,14 @@ export default function NewUserPage() {
                         </div>
 
                         <div className="col-span-2 flex justify-end mt-4">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                className="flex items-center gap-2 mr-2"
+                                onClick={() => window.location.href = "/users"}
+                            >
+                                Cancelar
+                            </Button>
                             <Button type="button" onClick={handleSubmit} className="flex items-center gap-2">
                                 <Send className="w-4 h-4" />
                                 Enviar Convite

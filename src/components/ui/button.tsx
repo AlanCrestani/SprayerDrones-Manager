@@ -5,11 +5,11 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-all transition-transform duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:-translate-y-0.5",
   {
     variants: {
       variant: {
-        default: "bg-[#1570BF] text-white border-none px-5 py-2 rounded-md cursor-pointer transition-all duration-200 hover:bg-[#115C9B] hover:shadow-lg hover:-translate-y-0.5",
+        default: "bg-[#1570BF] text-white border-none px-5 py-2 rounded-md cursor-pointer hover:bg-[#115C9B] hover:shadow-lg",
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-md",
         outline:
@@ -19,9 +19,8 @@ const buttonVariants = cva(
         ghost: "hover:bg-accent hover:text-accent-foreground rounded-md",
         link: "text-primary underline-offset-4 hover:underline",
 
-        // Botão azul com hover e "pulo"
         primaryBlue:
-          "bg-[#1570BF] text-white border-none px-5 py-2 rounded-md cursor-pointer transition-all duration-200 hover:bg-[#115C9B] hover:shadow-lg hover:-translate-y-0.5"
+          "bg-[#1570BF] text-white border-none px-5 py-2 rounded-md cursor-pointer hover:bg-[#115C9B] hover:shadow-lg"
       },
       size: {
         default: "h-10 px-4 py-2",
